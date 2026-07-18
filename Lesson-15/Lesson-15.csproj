@@ -5,7 +5,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>Lesson_15</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
 </Project>
