@@ -1,4 +1,3 @@
-﻿
 string textpath = "students.txt";
 string binarypath = "students.bin";
 
@@ -37,125 +36,139 @@ while (true)
 
     if (choice == "1")
     {
-        Console.Write("First name: ");
-        string firstname = Console.ReadLine();
+        try
+        {
+            Console.Write("First name: ");
+            string firstname = Console.ReadLine();
 
-        Console.Write("Last name: ");
-        string lastname = Console.ReadLine();
+            Console.Write("Last name: ");
+            string lastname = Console.ReadLine();
 
-        Console.Write("Age: ");
-        int age = int.Parse(Console.ReadLine());
+            Console.Write("Age: ");
+            int age = int.Parse(Console.ReadLine());
 
-        Console.Write("Average mark: ");
-        double mark = double.Parse(Console.ReadLine());
+            Console.Write("Average mark: ");
+            double mark = double.Parse(Console.ReadLine());
 
-        int newid = students.Count > 0 ? students[students.Count - 1].Id + 1 : 1;
-        students.Add(new Student(newid, firstname, lastname, age, mark));
-
-        Console.WriteLine("Student added.");
+            int newid = students.Count > 0 ? students[students.Count - 1].Id + 1 : 1;
+            students.Add(new Student(newid, firstname, lastname, age, mark));
+            Console.WriteLine("Student added.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding student: {ex.Message}");
+        }
     }
     else if (choice == "2")
     {
         Console.WriteLine("--- All students ---");
-        if (students.Count == 0)
-        {
-            Console.WriteLine("No students.");
-        }
-        else
-        {
-            foreach (Student s in students)
-                Console.WriteLine(s);
-        }
+        if (students.Count == 0) Console.WriteLine("No students.");
+        else foreach (Student s in students) Console.WriteLine(s);
     }
     else if (choice == "3")
     {
-        using (StreamWriter writer = new StreamWriter(textpath))
+        try
         {
-            foreach (Student s in students)
+            using (StreamWriter writer = new StreamWriter(textpath))
             {
-                writer.WriteLine(s.Id);
-                writer.WriteLine(s.FirstName);
-                writer.WriteLine(s.LastName);
-                writer.WriteLine(s.Age);
-                writer.WriteLine(s.AverageMark);
+                foreach (Student s in students)
+                {
+                    writer.WriteLine(s.Id);
+                    writer.WriteLine(s.FirstName);
+                    writer.WriteLine(s.LastName);
+                    writer.WriteLine(s.Age);
+                    writer.WriteLine(s.AverageMark);
+                }
             }
+            Console.WriteLine($"Saved to text file: {textpath}");
         }
-        Console.WriteLine($"Saved to text file: {textpath}");
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving to text: {ex.Message}");
+        }
     }
     else if (choice == "4")
     {
-        using (BinaryWriter writer = new BinaryWriter(File.Open(binarypath, FileMode.Create)))
+        try
         {
-            writer.Write(students.Count);
-            foreach (Student s in students)
+            using (BinaryWriter writer = new BinaryWriter(File.Open(binarypath, FileMode.Create)))
             {
-                writer.Write(s.Id);
-                writer.Write(s.FirstName);
-                writer.Write(s.LastName);
-                writer.Write(s.Age);
-                writer.Write(s.AverageMark);
+                writer.Write(students.Count);
+                foreach (Student s in students)
+                {
+                    writer.Write(s.Id);
+                    writer.Write(s.FirstName);
+                    writer.Write(s.LastName);
+                    writer.Write(s.Age);
+                    writer.Write(s.AverageMark);
+                }
             }
+            Console.WriteLine($"Saved to binary file: {binarypath}");
         }
-        Console.WriteLine($"Saved to binary file: {binarypath}");
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving to binary: {ex.Message}");
+        }
     }
     else if (choice == "5")
     {
-        if (!File.Exists(textpath))
+        try
         {
-            Console.WriteLine("Text file not found. Save first.");
-        }
-        else
-        {
-            students = new List<Student>();
-            using (StreamReader reader = new StreamReader(textpath))
+            if (!File.Exists(textpath)) Console.WriteLine("File not found.");
+            else
             {
-                while (!reader.EndOfStream)
+                students = new List<Student>();
+                using (StreamReader reader = new StreamReader(textpath))
                 {
-                    int id = int.Parse(reader.ReadLine());
-                    string firstname = reader.ReadLine();
-                    string lastname = reader.ReadLine();
-                    int age = int.Parse(reader.ReadLine());
-                    double mark = double.Parse(reader.ReadLine());
-
-                    students.Add(new Student(id, firstname, lastname, age, mark));
+                    while (!reader.EndOfStream)
+                    {
+                        int id = int.Parse(reader.ReadLine());
+                        string firstname = reader.ReadLine();
+                        string lastname = reader.ReadLine();
+                        int age = int.Parse(reader.ReadLine());
+                        double mark = double.Parse(reader.ReadLine());
+                        students.Add(new Student(id, firstname, lastname, age, mark));
+                    }
                 }
+                Console.WriteLine("Loaded from text file.");
             }
-            Console.WriteLine("Loaded from text file.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading from text: {ex.Message}");
         }
     }
     else if (choice == "6")
     {
-        if (!File.Exists(binarypath))
+        try
         {
-            Console.WriteLine("Binary file not found. Save first.");
-        }
-        else
-        {
-            students = new List<Student>();
-            using (BinaryReader reader = new BinaryReader(File.Open(binarypath, FileMode.Open)))
+            if (!File.Exists(binarypath)) Console.WriteLine("File not found.");
+            else
             {
-                int count = reader.ReadInt32();
-                for (int i = 0; i < count; i++)
+                students = new List<Student>();
+                using (BinaryReader reader = new BinaryReader(File.Open(binarypath, FileMode.Open)))
                 {
-                    int id = reader.ReadInt32();
-                    string firstname = reader.ReadString();
-                    string lastname = reader.ReadString();
-                    int age = reader.ReadInt32();
-                    double mark = reader.ReadDouble();
-
-                    students.Add(new Student(id, firstname, lastname, age, mark));
+                    int count = reader.ReadInt32();
+                    for (int i = 0; i < count; i++)
+                    {
+                        int id = reader.ReadInt32();
+                        string firstname = reader.ReadString();
+                        string lastname = reader.ReadString();
+                        int age = reader.ReadInt32();
+                        double mark = reader.ReadDouble();
+                        students.Add(new Student(id, firstname, lastname, age, mark));
+                    }
                 }
+                Console.WriteLine("Loaded from binary file.");
             }
-            Console.WriteLine("Loaded from binary file.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading from binary: {ex.Message}");
         }
     }
-    else if (choice == "0")
-    {
-        Console.WriteLine("Goodbye!");
-        break;
-    }
+    else if (choice == "0") break;
 }
-
 
 class Student
 {
